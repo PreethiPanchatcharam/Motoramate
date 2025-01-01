@@ -29,6 +29,7 @@ CREATE TABLE City (
     Foreign Key(StateID) REFERENCES State(StateID) ON DELETE SET NULL
 );
  
+--To manage users
 CREATE TABLE personalinfo (
     userid          NUMBER PRIMARY KEY,
     usertype        VARCHAR2(50), -- Broker, Sales Agent, etc.
@@ -52,6 +53,7 @@ CREATE TABLE personalinfo (
     addedby         VARCHAR2(50)
 );
 
+--To manage vehiclemake information
 CREATE TABLE vehiclemake (
     makeid     NUMBER PRIMARY KEY,
     makedesc   VARCHAR2(50) NOT NULL,
@@ -60,15 +62,17 @@ CREATE TABLE vehiclemake (
     addedby    VARCHAR2(20)
 );
 
+--To manage Vehicle type and categor
 CREATE TABLE VehicleTypeCategory (
     TypeCategoryID NUMBER PRIMARY KEY,
-    Type VARCHAR2(20) NOT NULL,
-    Category  VARCHAR2(20) NOT NULL,
+    Type VARCHAR2(20) NOT NULL,--Sedan,SUV,Sports Car,Truck,etc
+    Category  VARCHAR2(20) NOT NULL,--Private,Commercial,taxi,Government
     Status VARCHAR2(10) DEFAULT 'Active' CHECK (Status IN ('Active', 'Inactive')),
     AddedOn DATE DEFAULT SYSDATE,
     AddedBy VARCHAR2(50)
 );
 
+--To manage vehicle model within make and type,category
 CREATE TABLE vehiclemodel (
     modelid     NUMBER PRIMARY KEY,
     modeldesc   VARCHAR2(50) NOT NULL,
@@ -81,7 +85,7 @@ CREATE TABLE vehiclemodel (
     Foreign Key(typecategoryid) REFERENCES vehicletypecategory( typecategoryid )ON DELETE CASCADE
 );
 
-
+--To manage Vehicle information completely
 CREATE TABLE VehicleInfo (
     VehicleID NUMBER PRIMARY KEY,
     RegistrationNumber VARCHAR2(50),
@@ -97,6 +101,7 @@ CREATE TABLE VehicleInfo (
     Foreign Key(ownerid) REFERENCES PersonalInfo(UserID) ON DELETE CASCADE
 );
 
+--To manage brokers
 CREATE TABLE BrokerInfo (
     BrokerID NUMBER PRIMARY KEY,
     BrokerName VARCHAR2(100),
@@ -107,6 +112,7 @@ CREATE TABLE BrokerInfo (
     AddedBy VARCHAR2(50)
 );
 
+--To manage the login details of users
 CREATE TABLE LoginInfo (
     LoginID NUMBER PRIMARY KEY,
     UserID NUMBER NOT NULL ,
@@ -120,12 +126,14 @@ CREATE TABLE LoginInfo (
     Foreign Key(UserID) REFERENCES PersonalInfo(UserID) ON DELETE CASCADE
 );
 
+--To manage the roles of user
 CREATE TABLE Roles (
     RoleID NUMBER PRIMARY KEY,
     RoleName VARCHAR2(50) UNIQUE NOT NULL,
     Description VARCHAR2(255)
 );
 
+--To manage the permissions allowed toeach role
 CREATE TABLE Permissions (
     PermissionID NUMBER  PRIMARY KEY,
     RoleID NUMBER NOT NULL, -- Links to Roles table
@@ -134,7 +142,7 @@ CREATE TABLE Permissions (
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
 );
 
-
+--To manage the quotation information of a vehicle
 CREATE TABLE QuoteInfo (
     QuoteID NUMBER PRIMARY KEY,
     UserID NUMBER NOT NULL REFERENCES PersonalInfo(UserID) ON DELETE SET NULL,
@@ -149,6 +157,7 @@ CREATE TABLE QuoteInfo (
     AddedBy VARCHAR2(50)
 );
 
+--To manage the policies
 CREATE TABLE Policies (
     PolicyID NUMBER  PRIMARY KEY,
     PolicyNumber VARCHAR2(20) NOT NULL UNIQUE,
@@ -165,7 +174,7 @@ CREATE TABLE Policies (
     constraint cover_ck CHECK (CoverageType IN ('Comprehensive', 'TPL'))
 );
 
-
+--To manage the broker commissions calculated
 CREATE TABLE BrokerCommission (
     CommissionID NUMBER PRIMARY KEY,
     BrokerID NUMBER NOT NULL REFERENCES BrokerInfo(BrokerID) ON DELETE SET NULL,
@@ -178,6 +187,7 @@ CREATE TABLE BrokerCommission (
     AddedBy VARCHAR2(50)
 );
 
+--To manage the premium rate configured for each vehicle type and category
 CREATE TABLE PremiumRateConfig (
     ConfigID NUMBER PRIMARY KEY,
     VehicleCategory VARCHAR2(20) NOT NULL ,--category- e.g., 'Private', 'Commercial', 'Taxi'
@@ -190,7 +200,7 @@ CREATE TABLE PremiumRateConfig (
     AddedBy VARCHAR2(50)
 );
 
-
+--To manage the premiumcalculations againt quote information
 CREATE TABLE PremiumCalculation (
     CalculationID NUMBER PRIMARY KEY,
     QuoteID NUMBER NOT NULL ,
@@ -203,6 +213,7 @@ CREATE TABLE PremiumCalculation (
     Foreign Key(QuoteID) REFERENCES QuoteInfo(QuoteID) ON DELETE SET NULL
 );
 
+--To manage claims
 CREATE TABLE Claims (
     ClaimID NUMBER  PRIMARY KEY,
     PolicyID NUMBER NOT NULL,
@@ -214,7 +225,7 @@ CREATE TABLE Claims (
 );
 
 
-
+--Sequences
 CREATE SEQUENCE seq_user_id START WITH 1 INCREMENT BY 1 maxvalue 500 nocycle Nocache;
 CREATE SEQUENCE seq_broker_id START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_logininfo_id START WITH 1 INCREMENT BY 1;
